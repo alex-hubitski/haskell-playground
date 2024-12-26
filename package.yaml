@@ -1,0 +1,24 @@
+name: youtube-playlist-downloader
+version: 0.1.0.0
+description: A simple YouTube playlist downloader using yt-dlp
+
+dependencies:
+  - base >= 4.7 && < 5
+  - process
+  - optparse-applicative
+  - brick >= 2.1.1
+  - vty
+  - vty-unix
+  - text
+  - vector
+  - aeson >=2.1.2.1
+  - bytestring
+  - mtl
+
+executables:
+  youtube-playlist-downloader:
+    main: Main.hs
+    source-dirs: src
+    ghc-options:
+      - -Wall
+      - -threaded 

@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Haskell",
+      "type": "haskell",
+      "request": "launch",
+      "mainFile": "${workspaceFolder}/src/Main.hs",
+      "args": [],
+      "ghcOptions": ["-fdebug", "-O0"],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
