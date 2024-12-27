@@ -20,6 +20,7 @@ executable youtube-playlist-downloader
       UI
       UI.DetailsView
       UI.ListView
+      UI.MenuPanel
       UI.Types
       YT
       Paths_youtube_playlist_downloader

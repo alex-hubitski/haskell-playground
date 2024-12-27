@@ -18,15 +18,12 @@ import Brick
   , Padding(..)
   , txt
   , withAttr
-  , str
+--  , str
   , ViewportType(Both)
   , fg
   )
-import qualified Brick.Main as M
-import Control.Monad.State 
-  ( modify
-  , get
-  )
+-- import qualified Brick.Main as M
+import Control.Monad.State (get)
 import qualified Graphics.Vty as V
 import qualified Data.Vector as Vec
 import qualified Brick.Widgets.Center as C
@@ -36,6 +33,7 @@ import Types
 import UI.Types
 import UI.ListView
 import UI.DetailsView
+import UI.MenuPanel (drawMenuPanel)
 
 app :: App AppState () Name
 app = App
@@ -61,18 +59,8 @@ drawUI s = [ui]
         else viewport VideoViewport Both $
              vBox $ zipWith (drawVideo (selected s)) [0..] (Vec.toList $ videos s)
       , hBorder
-      , drawMenu s
+      , drawMenuPanel s
       ]
-
-drawMenu :: AppState -> Widget Name
-drawMenu s = vBox
-  [ padLeft (Pad 1) $ str "Controls:"
-  , padLeft (Pad 2) $ str "↑/↓ - Scroll vertically"
-  , padLeft (Pad 2) $ str "←/→ - Scroll horizontally"
-  , padLeft (Pad 2) $ if showingDetails s 
-                      then str "ESC/Enter - Back to list"
-                      else str "Enter - Show details | ESC - Quit"
-  ]
 
 handleEvent :: BrickEvent Name () -> EventM Name AppState ()
 handleEvent e@(VtyEvent _) = do
