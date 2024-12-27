@@ -13,3 +13,16 @@
 2024-12-26 08:59:00.786569000000 [58290(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
 2024-12-26 09:00:20.434626000000 [58343(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
 2024-12-26 09:11:01.340968000000 [29742(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
+2024-12-26 09:58:21.835708000000 [41255(ThreadId 15)] ERROR APP - user error (<getModule> loaded module can not find from path. </Users/alexhubitski/Samples/playground3/src/Main.hs> [])
+2024-12-26 09:58:21.862586000000 [41255(ThreadId 15)] ERROR APP - start debugging failed. user error (ExecResult not found.) : Left "user error (ExecResult not found.)"
+2024-12-26 10:00:26.984690000000 [41751(ThreadId 15)] ERROR APP - user error (<getModule> loaded module can not find from path. </Users/alexhubitski/Samples/playground3/src/Main.hs> [])
+2024-12-26 10:00:26.994443000000 [41751(ThreadId 15)] ERROR APP - start debugging failed. user error (ExecResult not found.) : Left "user error (ExecResult not found.)"
+2024-12-26 10:00:56.751806000000 [42028(ThreadId 15)] ERROR APP - user error (<getModule> loaded module can not find from path. </Users/alexhubitski/Samples/playground3/src/Main.hs> [])
+2024-12-26 10:00:56.764182000000 [42028(ThreadId 15)] ERROR APP - start debugging failed. user error (ExecResult not found.) : Left "user error (ExecResult not found.)"
+2024-12-26 10:05:29.133243000000 [42880(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
+2024-12-26 19:11:54.259477000000 [55708(ThreadId 15)] ERROR APP - start debugging failed. user error (ExecResult not found.) : Left "user error (ExecResult not found.)"
+2024-12-26 19:13:53.382249000000 [56024(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
+2024-12-26 19:14:51.862410000000 [56056(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
+2024-12-26 19:16:26.298155000000 [56123(ThreadId 15)] ERROR APP - start debugging failed. user error (ExecResult not found.) : Left "user error (ExecResult not found.)"
+2024-12-26 19:18:58.959312000000 [57478(ThreadId 15)] ERROR APP - start debugging failed. user error (ExecResult not found.) : Left "user error (ExecResult not found.)"
+2024-12-26 19:24:01.150496000000 [58170(ThreadId 15)] ERROR APP - [CRITICAL] can not get the initial ghci prompt.
