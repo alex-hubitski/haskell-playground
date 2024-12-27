@@ -18,6 +18,9 @@ executable youtube-playlist-downloader
       Parser
       Types
       UI
+      UI.DetailsView
+      UI.ListView
+      UI.Types
       YT
       Paths_youtube_playlist_downloader
   hs-source-dirs:
