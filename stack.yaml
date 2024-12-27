@@ -13,7 +13,8 @@ packages:
 # The rest of the configuration can remain as default
 # Dependency packages to be pulled from upstream that are not in the snapshot.
 extra-deps:
-- strict-io-0.2.2@sha256:1cc96f9a123a919ff9ee479f740cbc9fa9edf7c8ac65334de3fdce07638949ed,1012
+- brick-2.1.1
+- microlens-0.4.13.1
 
 # Override default flag values for local packages and extra-deps
 flags: {}
@@ -22,3 +23,6 @@ flags: {}
 extra-package-dbs: []
 
 allow-newer: true
+
+ghc-options:
+  "$locals": -Wall

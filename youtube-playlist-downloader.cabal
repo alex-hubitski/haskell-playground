@@ -15,6 +15,7 @@ executable youtube-playlist-downloader
   main-is: Main.hs
   other-modules:
       CommandLineParsing
+      Parser
       Types
       UI
       YT
@@ -27,6 +28,7 @@ executable youtube-playlist-downloader
     , base >=4.7 && <5
     , brick >=2.1.1
     , bytestring
+    , microlens >=0.4.13
     , mtl
     , optparse-applicative
     , process

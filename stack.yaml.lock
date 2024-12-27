@@ -5,12 +5,19 @@
 
 packages:
 - completed:
-    hackage: strict-io-0.2.2@sha256:1cc96f9a123a919ff9ee479f740cbc9fa9edf7c8ac65334de3fdce07638949ed,1012
+    hackage: brick-2.1.1@sha256:ff36d64f1027eac17a14a83de053067413accb58b79e5002dce2a79cb8a3dcb3,17385
     pantry-tree:
-      sha256: 2fd47d6f9374805075d176012d95d8ea28e643639b8d028f35f732618b5d1683
-      size: 345
+      sha256: c70beaff3ad9126bc2a9a57649ef63becd534b7eb6b015092cb28437fe3f916d
+      size: 4671
   original:
-    hackage: strict-io-0.2.2@sha256:1cc96f9a123a919ff9ee479f740cbc9fa9edf7c8ac65334de3fdce07638949ed,1012
+    hackage: brick-2.1.1
+- completed:
+    hackage: microlens-0.4.13.1@sha256:fc256e2b5d78e8e4f39b3dd359c57b8c19df50853a86eaf8f154a17441a5a51d,4703
+    pantry-tree:
+      sha256: 802ee9b159f67dd635dc4c6996bbbae834e643fc8e4e52e29d72a5cf89419131
+      size: 461
+  original:
+    hackage: microlens-0.4.13.1
 snapshots:
 - completed:
     sha256: 08bd13ce621b41a8f5e51456b38d5b46d7783ce114a50ab604d6bbab0d002146

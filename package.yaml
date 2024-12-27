@@ -14,6 +14,7 @@ dependencies:
   - aeson >=2.1.2.1
   - bytestring
   - mtl
+  - microlens >= 0.4.13
 
 executables:
   youtube-playlist-downloader:
@@ -21,4 +22,4 @@ executables:
     source-dirs: src
     ghc-options:
       - -Wall
-      - -threaded 
+      - -threaded

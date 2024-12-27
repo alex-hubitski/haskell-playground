@@ -24,6 +24,7 @@ main = do
       let appState = AppState
             { videos = Vec.fromList videoList
             , selected = 0
+            , showingDetails = False
             }
       
       -- Initialize vty
