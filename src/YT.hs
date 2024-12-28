@@ -23,7 +23,7 @@ fetchVideoMetadata videoUrl playlistStart count = try $ do
   (exitCode, output, errors) <- readProcessWithExitCode "yt-dlp" args ""
   
   putStrLn "\n=== Raw yt-dlp output ==="
-  putStrLn output
+  --putStrLn output
   putStrLn "=== End raw output ===\n"
   
   case exitCode of

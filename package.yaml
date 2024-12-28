@@ -23,3 +23,13 @@ executables:
     ghc-options:
       - -Wall
       - -threaded
+    other-modules:
+      - CommandLineParsing
+      - Parser
+      - Types
+      - UI
+      - UI.Types
+      - UI.ListView
+      - UI.DetailsView
+      - UI.MenuPanel
+      - YT

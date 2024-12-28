@@ -25,6 +25,7 @@ main = do
             { videos = Vec.fromList videoList
             , selected = 0
             , showingDetails = False
+            , windowHeight = 0
             }
       
       -- Initialize vty

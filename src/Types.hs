@@ -24,7 +24,8 @@ data Video = Video
 data AppState = AppState
   { videos :: V.Vector Video
   , selected :: Int
-  , showingDetails :: Bool  -- New field
+  , showingDetails :: Bool
+  , windowHeight :: Int
   } deriving (Show, Eq)
 
 initialState :: AppState
@@ -32,4 +33,5 @@ initialState = AppState
   { videos = V.empty
   , selected = 0
   , showingDetails = False
+  , windowHeight = 0
   }

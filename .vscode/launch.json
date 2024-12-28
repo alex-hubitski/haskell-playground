@@ -18,7 +18,10 @@
             "ghciPrompt": "H>>= ",
             "ghciInitialPrompt": "> ",
             "ghciCmd": "stack ghci --with-ghc=ghci-dap --test --no-load --no-build",
-            "ghciEnv": {},
+            "ghciEnv": {
+                "TERM": "xterm-256color",
+                "COLORTERM": "truecolor"
+            },
             "logFile": "${workspaceFolder}/.vscode/phoityne.log",
             "logLevel": "WARNING",
             "forceInspect": false

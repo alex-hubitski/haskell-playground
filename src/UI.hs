@@ -18,16 +18,20 @@ import Brick
   , Padding(..)
   , txt
   , withAttr
---  , str
+  , str
   , ViewportType(Both)
   , fg
   )
--- import qualified Brick.Main as M
-import Control.Monad.State (get)
+import qualified Brick.Main as M
+import Control.Monad.State 
+  ( modify
+  , get
+  )
 import qualified Graphics.Vty as V
 import qualified Data.Vector as Vec
 import qualified Brick.Widgets.Center as C
 import Brick.Widgets.Border (hBorder, borderWithLabel)
+import Debug.Trace (trace)
 
 import Types
 import UI.Types
@@ -63,6 +67,8 @@ drawUI s = [ui]
       ]
 
 handleEvent :: BrickEvent Name () -> EventM Name AppState ()
+handleEvent _e@(VtyEvent (V.EvResize _ newHeight)) = do
+    modify (\st -> st { windowHeight = newHeight })
 handleEvent e@(VtyEvent _) = do
     st <- get
     if showingDetails st
