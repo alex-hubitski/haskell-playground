@@ -26,6 +26,7 @@ main = do
             , selected = 0
             , showingDetails = False
             , windowHeight = 0
+            , subtitles = Nothing
             }
       
       -- Initialize vty

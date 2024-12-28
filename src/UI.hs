@@ -26,18 +26,20 @@ import qualified Brick.Main as M
 import Control.Monad.State 
   ( modify
   , get
+  , liftIO
   )
 import qualified Graphics.Vty as V
 import qualified Data.Vector as Vec
 import qualified Brick.Widgets.Center as C
 import Brick.Widgets.Border (hBorder, borderWithLabel)
-import Debug.Trace (trace)
+import qualified Data.Text as T  -- Import Data.Text as T
 
 import Types
 import UI.Types
 import UI.ListView
 import UI.DetailsView
-import UI.MenuPanel (drawMenuPanel)
+import UI.MenuPanel (drawMenuPanel, resetScroll)
+import qualified YT
 
 app :: App AppState () Name
 app = App
@@ -68,7 +70,21 @@ drawUI s = [ui]
 
 handleEvent :: BrickEvent Name () -> EventM Name AppState ()
 handleEvent _e@(VtyEvent (V.EvResize _ newHeight)) = do
+    liftIO $ putStrLn ("New window height: " ++ show newHeight)
     modify (\st -> st { windowHeight = newHeight })
+handleEvent e@(VtyEvent (V.EvKey V.KEnter [])) = do
+    st <- get
+    if not (showingDetails st)
+    then do
+        let selectedVideo = (Vec.!) (videos st) (selected st)
+        result <- liftIO $ YT.fetchSubtitles (T.unpack $ webpage_url selectedVideo)
+        case result of
+            Left err -> liftIO $ putStrLn $ "Error fetching subtitles: " ++ show err
+            Right subs -> do
+                modify (\s -> s { subtitles = Just subs, showingDetails = True })
+                -- Reset the scroll position of the details viewport
+                resetScroll
+    else modify (\s -> s { showingDetails = False })
 handleEvent e@(VtyEvent _) = do
     st <- get
     if showingDetails st

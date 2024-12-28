@@ -1,5 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
-module Types 
+module Types
   ( Video(..)
   , AppState(..)
   , initialState
@@ -26,6 +25,7 @@ data AppState = AppState
   , selected :: Int
   , showingDetails :: Bool
   , windowHeight :: Int
+  , subtitles :: Maybe T.Text
   } deriving (Show, Eq)
 
 initialState :: AppState
@@ -34,4 +34,5 @@ initialState = AppState
   , selected = 0
   , showingDetails = False
   , windowHeight = 0
+  , subtitles = Nothing
   }

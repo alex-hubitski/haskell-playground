@@ -1,11 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 module UI.MenuPanel
     ( drawMenuPanel
+    , resetScroll
     ) where
 
 import Brick
 import qualified Types as T (AppState(..))
-import UI.Types (Name)
+import UI.Types (Name(..)) 
 import Lens.Micro ((^.))
 import qualified Brick.Main as M
 
@@ -29,6 +30,11 @@ drawFullMenuPanel s = vBox
     ]
 
 drawCompactMenuPanel :: T.AppState -> Widget Name
-drawCompactMenuPanel s = vBox
+drawCompactMenuPanel _ = vBox
     [ padLeft (Pad 2) $ str "ESC - Back/Exit | F1 - Help"
     ]
+
+resetScroll :: EventM Name T.AppState ()
+resetScroll = do
+    M.vScrollToBeginning (M.viewportScroll DetailsViewport)
+    M.hScrollToBeginning (M.viewportScroll DetailsViewport)
