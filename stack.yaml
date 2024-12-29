@@ -15,7 +15,8 @@ packages:
 extra-deps:
 - brick-2.1.1
 - microlens-0.4.13.1
-
+- hspec-2.9.4
+- hspec-discover-2.9.4
 # Override default flag values for local packages and extra-deps
 flags: {}
 

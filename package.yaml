@@ -16,6 +16,19 @@ dependencies:
   - mtl
   - microlens >= 0.4.13
 
+library:
+  source-dirs: src
+  exposed-modules:
+    - CommandLineParsing
+    - Parser
+    - Types
+    - UI
+    - UI.Types
+    - UI.ListView
+    - UI.DetailsView
+    - UI.MenuPanel
+    - YT
+
 executables:
   youtube-playlist-downloader:
     main: Main.hs
@@ -24,12 +37,25 @@ executables:
       - -Wall
       - -threaded
     other-modules:
+      - Paths_youtube_playlist_downloader
       - CommandLineParsing
       - Parser
       - Types
       - UI
-      - UI.Types
-      - UI.ListView
       - UI.DetailsView
+      - UI.ListView
       - UI.MenuPanel
+      - UI.Types
       - YT
+
+tests:
+  allTests:
+    main: Main.hs
+    source-dirs: test
+    ghc-options:
+      - -Wall
+    dependencies:
+      - base >= 4.7 && < 5
+      - hspec >= 2.11.10
+      - hspec-discover >= 2.11.10
+      - youtube-playlist-downloader

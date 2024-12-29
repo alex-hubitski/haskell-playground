@@ -11,9 +11,8 @@ license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
 
-executable youtube-playlist-downloader
-  main-is: Main.hs
-  other-modules:
+library
+  exposed-modules:
       CommandLineParsing
       Parser
       Types
@@ -22,6 +21,39 @@ executable youtube-playlist-downloader
       UI.ListView
       UI.DetailsView
       UI.MenuPanel
+      YT
+  other-modules:
+      Main
+      Paths_youtube_playlist_downloader
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson >=2.1.2.1
+    , base >=4.7 && <5
+    , brick >=2.1.1
+    , bytestring
+    , microlens >=0.4.13
+    , mtl
+    , optparse-applicative
+    , process
+    , text
+    , vector
+    , vty
+    , vty-unix
+  default-language: Haskell2010
+
+executable youtube-playlist-downloader
+  main-is: Main.hs
+  other-modules:
+      Paths_youtube_playlist_downloader
+      CommandLineParsing
+      Parser
+      Types
+      UI
+      UI.DetailsView
+      UI.ListView
+      UI.MenuPanel
+      UI.Types
       YT
   hs-source-dirs:
       src
@@ -39,4 +71,31 @@ executable youtube-playlist-downloader
     , vector
     , vty
     , vty-unix
+  default-language: Haskell2010
+
+test-suite allTests
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      ParserSrtTest
+      Paths_youtube_playlist_downloader
+  hs-source-dirs:
+      test
+  ghc-options: -Wall
+  build-depends:
+      aeson >=2.1.2.1
+    , base >=4.7 && <5
+    , brick >=2.1.1
+    , bytestring
+    , hspec >=2.11.10
+    , hspec-discover >=2.11.10
+    , microlens >=0.4.13
+    , mtl
+    , optparse-applicative
+    , process
+    , text
+    , vector
+    , vty
+    , vty-unix
+    , youtube-playlist-downloader
   default-language: Haskell2010

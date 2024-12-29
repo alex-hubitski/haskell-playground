@@ -11,8 +11,12 @@ import Brick
   , txt
   , hBox
   , vBox
-  , withAttr
+  , withAttr, viewport, ViewportType (Vertical)
   )
+import Brick.Widgets.Core (str)
+import qualified Brick.Widgets.Border as B
+import qualified Brick.Widgets.Center as C
+
 import qualified Brick.Main as M
 import qualified Graphics.Vty as V
 import qualified Data.Vector as Vec
@@ -27,9 +31,13 @@ label l = withAttr labelAttr $ txt l
 
 subtitlesWidget :: AppState -> Widget Name
 subtitlesWidget state =
-  case subtitles state of
-    Just subs -> hBox [label "Subs: ", txt subs]
-    Nothing -> txt "No subtitles available"
+  let content = case subtitles state of
+          Just subs -> 
+              let wrappedLines = map (str . T.unpack) (T.lines subs)  -- Convert T.Text to String
+              in vBox wrappedLines  -- Use vBox to stack lines vertically
+          Nothing -> 
+              str "No subtitles available"  -- Placeholder for no subtitles
+  in hBox [label "Subs: ", content]
  
 drawVideoDetails :: AppState -> Widget Name
 drawVideoDetails s = 
