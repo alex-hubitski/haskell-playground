@@ -120,7 +120,7 @@ formatSubtitles width text = wrapText width (T.unlines (map T.strip (T.lines tex
 wrapText :: Int -> T.Text -> [T.Text]
 wrapText width text = go (T.words text) []
   where
-    go [] acc = [T.unwords (reverse acc)]  -- Return the last line
+    go [] acc = [T.unwords acc]  -- Return the last line
     go words acc =
-      let (line, rest) = break (\w -> T.length (T.unwords (w : acc)) > width) words
-      in T.unwords (reverse acc) : go rest (line ++ acc)
+      let (line, rest) = break (\w -> T.length (T.unwords (acc ++ [w])) > width) words
+      in T.unwords acc : go rest (acc ++ line)

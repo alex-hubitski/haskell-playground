@@ -11,11 +11,9 @@ import Brick
   , txt
   , hBox
   , vBox
-  , withAttr, viewport, ViewportType (Vertical)
+  , withAttr
   )
 import Brick.Widgets.Core (str)
-import qualified Brick.Widgets.Border as B
-import qualified Brick.Widgets.Center as C
 
 import qualified Brick.Main as M
 import qualified Graphics.Vty as V
