@@ -14,6 +14,8 @@ import System.Process
 import Data.Maybe (mapMaybe)
 import System.Exit (ExitCode(..))
 import qualified Data.Set as Set
+import Data.Text (Text)
+import Text.Regex.TDFA ((=~))
 
 import Types (Video(..))
 import Parser (parseVideo)
@@ -74,25 +76,28 @@ fetchSubtitles videoUrl = try $ do
     ExitFailure code ->
       error $ "yt-dlp failed with code " ++ show code ++ ": " ++ errors
 
+-- Helper function to check if a line is a timestamp
+isTimestamp :: T.Text -> Bool
+isTimestamp line = "-->" `T.isInfixOf` line
+
 -- A parser that reads SRT lines in blocks and converts them to plain text.
--- If a line is a number, we skip it and the next line (assumed to be a timestamp),
--- then read text lines until we hit a blank line, removing duplicates while preserving structure.
 parseSrtToText :: [T.Text] -> [T.Text]
-parseSrtToText lines = go (map T.stripEnd lines) Set.empty [] False
+parseSrtToText lines = go (map removeBracketedText lines) Set.empty [] False
   where
-    go [] _ acc _ = reverse acc
+    go [] _ acc _ = reverse $ filter (not . isTimestamp) acc
     go (x:xs) seen acc lastWasEmpty
-      | T.all isDigit x =
-          -- Skip the index line (x) and the timestamp line (next line)
-          go (drop 1 xs) seen acc False
+      | isBlockNumber x || isTimestamp x =
+          -- Skip the index line and timestamp line
+          go xs seen acc False
       | T.null x =
-          -- If we encounter an empty line, add it only if the previous line wasn't empty
-          if lastWasEmpty
-          then go xs seen acc True
-          else go xs seen (x : acc) True
+          -- If we encounter an empty line, skip it
+          go xs seen acc lastWasEmpty
+      | T.null (T.strip x) =
+          -- Skip empty or whitespace-only lines
+          go xs seen acc lastWasEmpty
       | otherwise =
-          -- Collect the subtitle text until the next empty line
-          let (block, rest) = break T.null (x:xs)
+          -- Collect the subtitle text until the next block number or timestamp
+          let (block, rest) = break (\line -> isBlockNumber line || isTimestamp line) (x:xs)
               -- Filter duplicates while preserving order
               (uniqueBlock, newSeen) = foldr 
                 (\line (lines, seenSet) ->
@@ -102,7 +107,21 @@ parseSrtToText lines = go (map T.stripEnd lines) Set.empty [] False
                 )
                 ([], seen)
                 block
-          in go (dropWhile T.null rest) newSeen (uniqueBlock ++ acc) False
+          in go rest newSeen (uniqueBlock ++ acc) False
+
+-- Helper function to remove square brackets and their contents from text
+removeBracketedText :: T.Text -> T.Text
+removeBracketedText line = 
+    let result = go (T.unpack line) False ""
+    in T.strip $ T.pack result
+  where
+    go [] _ acc = reverse acc
+    go (c:cs) True acc
+      | c == ']'  = go cs False acc  -- end of bracketed section
+      | otherwise = go cs True acc    -- skip chars inside brackets
+    go (c:cs) False acc
+      | c == '['  = go cs True acc    -- start of bracketed section
+      | otherwise = go cs False (c:acc)
 
 formatSubtitles :: Int -> T.Text -> [T.Text]
 formatSubtitles width text = wrapText width text

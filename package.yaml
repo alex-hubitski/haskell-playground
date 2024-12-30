@@ -16,6 +16,7 @@ dependencies:
   - bytestring
   - mtl
   - microlens >= 0.4.13
+  - regex-tdfa
 
 library:
   source-dirs: src
