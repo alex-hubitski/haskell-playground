@@ -4,6 +4,7 @@ description: A simple YouTube playlist downloader using yt-dlp
 
 dependencies:
   - base >= 4.7 && < 5
+  - containers
   - process
   - optparse-applicative
   - brick >= 2.1.1

@@ -13,6 +13,7 @@ import qualified Data.Text.Encoding as TE
 import System.Process
 import Data.Maybe (mapMaybe)
 import System.Exit (ExitCode(..))
+import qualified Data.Set as Set
 
 import Types (Video(..))
 import Parser (parseVideo)
@@ -67,8 +68,9 @@ fetchSubtitles videoUrl = try $ do
           let srtLines = T.lines (T.pack output)
           -- Parse the SRT lines into plain text paragraphs
           let paragraphs = parseSrtToText srtLines
-          let formattedSubtitles = formatSubtitles 80 (T.unlines paragraphs)
-          return $ T.unlines formattedSubtitles
+          return $ T.unlines paragraphs
+          -- let formattedSubtitles = formatSubtitles 80 (T.unlines paragraphs)
+          -- return $ T.unlines formattedSubtitles
         ExitFailure catCode ->
           error $ "cat failed with code " ++ show catCode ++ ": " ++ catErrors
     ExitFailure code ->
@@ -76,20 +78,33 @@ fetchSubtitles videoUrl = try $ do
 
 -- A parser that reads SRT lines in blocks and converts them to plain text.
 -- If a line is a number, we skip it and the next line (assumed to be a timestamp),
--- then read text lines until we hit a blank line.
+-- then read text lines until we hit a blank line, removing duplicates while preserving structure.
 parseSrtToText :: [T.Text] -> [T.Text]
-parseSrtToText [] = []
-parseSrtToText (x:xs)
-  | T.all isDigit x =
-      -- Skip the index line (x) and the timestamp line (next line)
-      parseSrtToText (drop 1 xs)  -- Skip the next line (timestamp)
-  | T.null x =
-      -- If we encounter an empty line, continue parsing
-      parseSrtToText xs
-  | otherwise =
-      -- Collect the subtitle text until the next empty line
-      let (block, rest) = break T.null (x:xs)  -- Collect lines until an empty line
-      in T.unlines block : parseSrtToText (dropWhile T.null rest)  -- Skip empty lines after the block
+parseSrtToText lines = go lines Set.empty [] False
+  where
+    go [] _ acc _ = reverse acc
+    go (x:xs) seen acc lastWasEmpty
+      | T.all isDigit x =
+          -- Skip the index line (x) and the timestamp line (next line)
+          go (drop 1 xs) seen acc False
+      | T.null x =
+          -- If we encounter an empty line, add it only if the previous line wasn't empty
+          if lastWasEmpty
+          then go xs seen acc True
+          else go xs seen (x : acc) True
+      | otherwise =
+          -- Collect the subtitle text until the next empty line
+          let (block, rest) = break T.null (x:xs)
+              -- Filter duplicates while preserving order
+              (uniqueBlock, newSeen) = foldr 
+                (\line (lines, seenSet) ->
+                  if line `Set.member` seenSet || T.null (T.strip line)
+                  then (lines, seenSet)
+                  else (line : lines, Set.insert line seenSet)
+                )
+                ([], seen)
+                block
+          in go (dropWhile T.null rest) newSeen (uniqueBlock ++ acc) False
 
 -- Helper function to check if a line is a digit
 isDigit :: Char -> Bool
@@ -115,7 +130,7 @@ skip _ [] = ([], [])
 skip n (_:xs) = skip (n - 1) xs
 
 formatSubtitles :: Int -> T.Text -> [T.Text]
-formatSubtitles width text = wrapText width (T.unlines (map T.strip (T.lines text)))
+formatSubtitles width text = wrapText width text
 
 wrapText :: Int -> T.Text -> [T.Text]
 wrapText width text = go (T.words text) []

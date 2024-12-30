@@ -63,6 +63,25 @@
             "logFile": "${workspaceFolder}/.vscode/phoityne.log",
             "logLevel": "WARNING",
             "forceInspect": false
+        },
+        {
+            "type": "ghc",
+            "request": "launch",
+            "name": "Debug parseStrToText test",
+            "internalConsoleOptions": "openOnSessionStart",
+            "workspace": "${workspaceFolder}",
+            "startup": "${workspaceFolder}/test/ParserSrtTest.hs",
+            "startupFunc": "",
+            "startupArgs": "",
+            "stopOnEntry": false,
+            "mainArgs": "",
+            "ghciPrompt": "H>>= ",
+            "ghciInitialPrompt": "> ",
+            "ghciCmd": "stack ghci --with-ghc=ghci-dap --test --no-load --no-build",
+            "ghciEnv": {},
+            "logFile": "${workspaceFolder}/.vscode/phoityne.log",
+            "logLevel": "WARNING",
+            "forceInspect": false
         }
     ]
 }
