@@ -68,9 +68,7 @@ fetchSubtitles videoUrl = try $ do
           let srtLines = T.lines (T.pack output)
           -- Parse the SRT lines into plain text paragraphs
           let paragraphs = parseSrtToText srtLines
-          return $ T.unlines paragraphs
-          -- let formattedSubtitles = formatSubtitles 80 (T.unlines paragraphs)
-          -- return $ T.unlines formattedSubtitles
+          return $ formatOutput paragraphs
         ExitFailure catCode ->
           error $ "cat failed with code " ++ show catCode ++ ": " ++ catErrors
     ExitFailure code ->
@@ -80,7 +78,7 @@ fetchSubtitles videoUrl = try $ do
 -- If a line is a number, we skip it and the next line (assumed to be a timestamp),
 -- then read text lines until we hit a blank line, removing duplicates while preserving structure.
 parseSrtToText :: [T.Text] -> [T.Text]
-parseSrtToText lines = go lines Set.empty [] False
+parseSrtToText lines = go (map T.stripEnd lines) Set.empty [] False
   where
     go [] _ acc _ = reverse acc
     go (x:xs) seen acc lastWasEmpty
@@ -106,6 +104,21 @@ parseSrtToText lines = go lines Set.empty [] False
                 block
           in go (dropWhile T.null rest) newSeen (uniqueBlock ++ acc) False
 
+formatSubtitles :: Int -> T.Text -> [T.Text]
+formatSubtitles width text = wrapText width text
+
+wrapText :: Int -> T.Text -> [T.Text]
+wrapText width text = go (T.words text) []
+  where
+    go [] acc = [T.unwords acc]  -- Return the last line
+    go words acc =
+      let (line, rest) = break (\w -> T.length (T.unwords (acc ++ [w])) > width) words
+      in T.unwords acc : go rest (acc ++ line)
+
+-- New function to ensure consistent line endings and format output
+formatOutput :: [T.Text] -> T.Text
+formatOutput = T.unlines . map (T.justifyLeft 80 ' ')
+
 -- Helper function to check if a line is a digit
 isDigit :: Char -> Bool
 isDigit c = c >= '0' && c <= '9'
@@ -128,14 +141,3 @@ skip :: Int -> [T.Text] -> ([T.Text], [T.Text])
 skip 0 xs = ([], xs)
 skip _ [] = ([], [])
 skip n (_:xs) = skip (n - 1) xs
-
-formatSubtitles :: Int -> T.Text -> [T.Text]
-formatSubtitles width text = wrapText width text
-
-wrapText :: Int -> T.Text -> [T.Text]
-wrapText width text = go (T.words text) []
-  where
-    go [] acc = [T.unwords acc]  -- Return the last line
-    go words acc =
-      let (line, rest) = break (\w -> T.length (T.unwords (acc ++ [w])) > width) words
-      in T.unwords acc : go rest (acc ++ line)

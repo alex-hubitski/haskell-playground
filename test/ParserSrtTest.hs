@@ -11,7 +11,7 @@ testSrtContent :: [T.Text]
 testSrtContent =
   [ "1"
   , "00:00:05,000 --> 00:00:09,070"
-  , "hi welcome to another video so deep seek"
+  , "hi welcome to another video so deep seek "
   , ""
   , "2"
   , "00:00:09,070 --> 00:00:09,080"
@@ -20,7 +20,7 @@ testSrtContent =
   , "3"
   , "00:00:09,080 --> 00:00:12,390"
   , "hi welcome to another video so deep seek"
-  , "V3 has been recently launched and it's a"
+  , "V3 has been recently launched and it's a "
   , "4"
   , "00:00:12,390 --> 00:00:12,400"
   , "V3 has been recently launched and it's a"
