@@ -14,8 +14,6 @@ import System.Process
 import Data.Maybe (mapMaybe)
 import System.Exit (ExitCode(..))
 import qualified Data.Set as Set
-import Data.Text (Text)
-import Text.Regex.TDFA ((=~))
 
 import Types (Video(..))
 import Parser (parseVideo)
@@ -112,8 +110,10 @@ parseSrtToText lines = go (map removeBracketedText lines) Set.empty [] False
 -- Helper function to remove square brackets and their contents from text
 removeBracketedText :: T.Text -> T.Text
 removeBracketedText line = 
-    let result = go (T.unpack line) False ""
-    in T.strip $ T.pack result
+    let result = go (T.unpack line) False []
+        -- Clean up multiple spaces that might appear after removing brackets
+        cleanedResult = unwords . words $ result
+    in T.strip $ T.pack cleanedResult
   where
     go [] _ acc = reverse acc
     go (c:cs) True acc

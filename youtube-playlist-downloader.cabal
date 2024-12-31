@@ -37,7 +37,6 @@ library
     , mtl
     , optparse-applicative
     , process
-    , regex-tdfa
     , text
     , vector
     , vty
@@ -70,7 +69,6 @@ executable youtube-playlist-downloader
     , mtl
     , optparse-applicative
     , process
-    , regex-tdfa
     , text
     , vector
     , vty
@@ -98,7 +96,6 @@ test-suite allTests
     , mtl
     , optparse-applicative
     , process
-    , regex-tdfa
     , text
     , vector
     , vty
