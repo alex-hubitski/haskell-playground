@@ -15,11 +15,8 @@ import Data.Maybe (mapMaybe)
 import System.Exit (ExitCode(..))
 import qualified Data.Set as Set
 
-import Types (Video(..))
-import Parser (parseVideo)
+import Types (Video(..), parseVideo)
 
-instance FromJSON Video where
-  parseJSON = parseVideo
 
 
 fetchVideoMetadata :: String -> Int -> Int -> IO (Either SomeException [Video])
@@ -57,11 +54,11 @@ fetchSubtitles videoUrl = try $ do
              , "-o", "temp_subtitle"
              , videoUrl
              ]
-  (exitCode, _, errors) <- readProcessWithExitCode "yt-dlp" args ""
+  (exitCode, _, _) <- readProcessWithExitCode "yt-dlp" args ""
 
   case exitCode of
     ExitSuccess -> do
-      (catExitCode, output, catErrors) <- readProcessWithExitCode "cat" ["temp_subtitle.en.srt"] ""
+      (catExitCode, output, _) <- readProcessWithExitCode "cat" ["temp_subtitle.en.srt"] ""
       _ <- readProcessWithExitCode "rm" ["temp_subtitle.en.srt"] ""
       case catExitCode of
         ExitSuccess -> do
@@ -69,10 +66,8 @@ fetchSubtitles videoUrl = try $ do
           -- Parse the SRT lines into plain text paragraphs
           let paragraphs = parseSrtToText srtLines
           return $ formatOutput paragraphs
-        ExitFailure catCode ->
-          error $ "cat failed with code " ++ show catCode ++ ": " ++ catErrors
-    ExitFailure code ->
-      error $ "yt-dlp failed with code " ++ show code ++ ": " ++ errors
+        _ -> return "n/a"  -- No subtitles found, return empty text
+    _ -> return "n/a"  -- yt-dlp failed to find subtitles, return empty text
 
 -- Helper function to check if a line is a timestamp
 isTimestamp :: T.Text -> Bool
@@ -80,7 +75,7 @@ isTimestamp line = "-->" `T.isInfixOf` line
 
 -- A parser that reads SRT lines in blocks and converts them to plain text.
 parseSrtToText :: [T.Text] -> [T.Text]
-parseSrtToText lines = go (map removeBracketedText lines) Set.empty [] False
+parseSrtToText srtLines = go (map removeBracketedText srtLines) Set.empty [] False
   where
     go [] _ acc _ = reverse $ filter (not . isTimestamp) acc
     go (x:xs) seen acc lastWasEmpty
@@ -98,14 +93,14 @@ parseSrtToText lines = go (map removeBracketedText lines) Set.empty [] False
           let (block, rest) = break (\line -> isBlockNumber line || isTimestamp line) (x:xs)
               -- Filter duplicates while preserving order
               (uniqueBlock, newSeen) = foldr 
-                (\line (lines, seenSet) ->
+                (\line (accLines, seenSet) ->
                   if line `Set.member` seenSet || T.null (T.strip line)
-                  then (lines, seenSet)
-                  else (line : lines, Set.insert line seenSet)
+                  then (accLines, seenSet)
+                  else (line : accLines, Set.insert line seenSet)
                 )
                 ([], seen)
                 block
-          in go rest newSeen (uniqueBlock ++ acc) False
+          in go rest newSeen (reverse uniqueBlock ++ acc) False
 
 -- Helper function to remove square brackets and their contents from text
 removeBracketedText :: T.Text -> T.Text
@@ -123,40 +118,14 @@ removeBracketedText line =
       | c == '['  = go cs True acc    -- start of bracketed section
       | otherwise = go cs False (c:acc)
 
-formatSubtitles :: Int -> T.Text -> [T.Text]
-formatSubtitles width text = wrapText width text
-
-wrapText :: Int -> T.Text -> [T.Text]
-wrapText width text = go (T.words text) []
-  where
-    go [] acc = [T.unwords acc]  -- Return the last line
-    go words acc =
-      let (line, rest) = break (\w -> T.length (T.unwords (acc ++ [w])) > width) words
-      in T.unwords acc : go rest (acc ++ line)
 
 -- New function to ensure consistent line endings and format output
 formatOutput :: [T.Text] -> T.Text
 formatOutput = T.unlines . map (T.justifyLeft 80 ' ')
 
 -- Helper function to check if a line is a digit
-isDigit :: Char -> Bool
-isDigit c = c >= '0' && c <= '9'
 
 -- Check if a line is purely numeric (index).
 isBlockNumber :: T.Text -> Bool
 isBlockNumber line = T.all (\c -> c >= '0' && c <= '9') (T.strip line)
 
--- Read lines until a blank line (end of block).
-readBlock :: [T.Text] -> ([T.Text], [T.Text])
-readBlock [] = ([], [])
-readBlock (l:ls)
-  | T.null (T.strip l) = ([], ls)  -- blank line => end of block
-  | otherwise =
-      let (subsequent, rest) = readBlock ls
-      in (l : subsequent, rest)
-
--- Skip n lines, returning the remainder.
-skip :: Int -> [T.Text] -> ([T.Text], [T.Text])
-skip 0 xs = ([], xs)
-skip _ [] = ([], [])
-skip n (_:xs) = skip (n - 1) xs

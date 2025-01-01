@@ -30,11 +30,12 @@ label l = withAttr labelAttr $ txt l
 subtitlesWidget :: AppState -> Widget Name
 subtitlesWidget state =
   let content = case subtitles state of
-          Just subs -> 
-              let wrappedLines = map (str . T.unpack) (T.lines subs)  -- Convert T.Text to String
-              in vBox wrappedLines  -- Use vBox to stack lines vertically
+          Just (Left loadingMsg) -> str (T.unpack loadingMsg)  -- Loading message
+          Just (Right subs) -> 
+              let wrappedLines = map (str . T.unpack) (T.lines subs)
+              in vBox wrappedLines
           Nothing -> 
-              str "No subtitles available"  -- Placeholder for no subtitles
+              str "Subtitles not fetched yet"  -- Initial state
   in hBox [label "Subs: ", content]
  
 drawVideoDetails :: AppState -> Widget Name
@@ -58,7 +59,7 @@ drawVideoDetails s =
       , subtitlesWidget s
       ]
 
-handleDetailsView :: BrickEvent Name () -> AppState -> EventM Name AppState ()
+handleDetailsView :: BrickEvent Name AppState -> AppState -> EventM Name AppState ()
 handleDetailsView e _ = case e of
     VtyEvent (V.EvKey V.KUp [])    -> M.vScrollBy (M.viewportScroll DetailsViewport) (-1)
     VtyEvent (V.EvKey V.KDown [])   -> M.vScrollBy (M.viewportScroll DetailsViewport) 1

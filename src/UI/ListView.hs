@@ -40,7 +40,7 @@ drawVideo selectedIdx idx v =
      (if idx == selectedIdx then withAttr selectedAttr else id) $
      content
 
-handleListView :: BrickEvent Name () -> AppState -> EventM Name AppState ()
+handleListView :: BrickEvent Name AppState -> AppState -> EventM Name AppState ()
 handleListView e st = case e of
     VtyEvent (V.EvKey V.KUp []) -> do
         let newPos = max 0 (selected st - 1)

@@ -5,7 +5,8 @@ import Graphics.Vty.Platform.Unix (mkVty)
 import Graphics.Vty (defaultConfig)
 import CommandLineParsing (Options (..), parseOptions)
 import qualified YT
-import Types (AppState(..))
+import Types (AppState(..), initialState)
+import Brick.BChan (newBChan)
 import UI
 import qualified Data.Vector as Vec
 
@@ -21,7 +22,9 @@ main = do
   case result of
     Left e -> putStrLn $ "Error: " ++ show e
     Right videoList -> do
-      let appState = AppState
+      chan <- newBChan 10
+      let appState = initialState chan
+      let updatedState = appState
             { videos = Vec.fromList videoList
             , selected = 0
             , showingDetails = False
@@ -34,5 +37,5 @@ main = do
       initialVty <- buildVty
       
       -- Run the brick application with customMain
-      _ <- Brick.customMain initialVty buildVty Nothing app appState
+      _ <- Brick.customMain initialVty buildVty (Just chan) (app chan) updatedState
       putStrLn "Done!"
